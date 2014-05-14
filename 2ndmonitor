@@ -1,0 +1,41 @@
+#!/bin/sh
+# Author: rDini
+
+#f [ $(xrandr | grep -A 1 " connected " | grep -v "^--$" | awk '{print $1}' | grep -c HDMI1) ] ; then
+#	cmd="xrandr --output HDMI1 --auto --left-of LVDS1"
+#	echo "Running command: $cmd"
+#	eval $cmd
+#fi
+
+MONITOR=$(xrandr |grep " connected" | awk '{if($2 !~ "disconnected"){print $1}}' |grep -v LVDS1 | head -n 1)
+#CMD="xrandr --output $MONITOR --auto $POSITION LVDS1"
+#POSITION="--left-of"
+function moveMonitor(){
+	echo "Second monitor: $MONITOR"
+	CMD="xrandr --output $MONITOR --auto $1 LVDS1"
+        echo "Running command: $CMD"
+        eval $CMD
+}
+
+################## ---------- MENU
+if
+        [ -z $1 ]
+then
+       echo -e "Second monitor: $MONITOR \t Default: LEFT"
+       cmd="xrandr --output $MONITOR --auto --left-of LVDS1"
+       echo "Running command: $cmd"
+       eval $cmd
+else
+	while getopts ":htlrb" opt; do
+	  case $opt in
+	        \?)     echo -e "Invalid option: $OPTARG\n" ; printusage ; exit 1 ;;
+	        h)      printusage ;;
+		t)	moveMonitor --above ;;
+                l)      moveMonitor --left-of ;;
+                r)      moveMonitor --right-of ;;
+                b)      moveMonitor --below ;;
+		:)      echo "Option -$OPTARG requires an argument." >&2
+	                exit 1 ;;
+	  esac
+	done
+fi
