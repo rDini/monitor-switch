@@ -7,6 +7,7 @@ The Default position if it has a second monitor, is: On Left
 Commando to run: 2ndmonitor
 
 Option:
+
 	-l	Move second monitor to 'left of' main monitor
         -r      Move second monitor to 'right of' main monitor
         -t      Move second monitor to 'above of' main monitor
