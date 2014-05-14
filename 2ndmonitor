@@ -1,28 +1,37 @@
 #!/bin/sh
 # Author: rDini
+######################### VARIABLES
 
-#f [ $(xrandr | grep -A 1 " connected " | grep -v "^--$" | awk '{print $1}' | grep -c HDMI1) ] ; then
-#	cmd="xrandr --output HDMI1 --auto --left-of LVDS1"
-#	echo "Running command: $cmd"
-#	eval $cmd
-#fi
+DefMonitor="LVDS1"
+DefaultPosition="--left-of"
 
-MONITOR=$(xrandr |grep " connected" | awk '{if($2 !~ "disconnected"){print $1}}' |grep -v LVDS1 | head -n 1)
-#CMD="xrandr --output $MONITOR --auto $POSITION LVDS1"
-#POSITION="--left-of"
+MONITOR2=$(xrandr |grep " connected" | awk '{if($2 !~ "disconnected"){print $1}}' |grep -v $DefMonitor | head -n 1)
+
+############ FUNCTIONS ###############
 function moveMonitor(){
-	echo "Second monitor: $MONITOR"
-	CMD="xrandr --output $MONITOR --auto $1 LVDS1"
+        echo "Second monitor: $MONITOR2"
+        CMD="xrandr --output $MONITOR2 --auto $1 $DefMonitor"
         echo "Running command: $CMD"
         eval $CMD
 }
-
+printusage(){
+	echo -e "Usage help: \n
+	\t-l\t Move second monitor to 'left of' main monitor
+	\t-r\t Move second monitor to 'right of' main monitor
+	\t-t\t Move second monitor to 'above of' main monitor
+	\t-b\t Move second monitor to 'bellow of' main monitor"
+}
+####################################################################
+if [ -z $MONITOR2 ] ; then
+	xrandr --output $DefMonitor --auto
+	exit
+fi
 ################## ---------- MENU
 if
         [ -z $1 ]
 then
-       echo -e "Second monitor: $MONITOR \t Default: LEFT"
-       cmd="xrandr --output $MONITOR --auto --left-of LVDS1"
+       echo -e "Second monitor: $MONITOR2 \t Default: $DefaultPosition"
+       cmd="xrandr --output $MONITOR2 --auto $DefaultPosition $DefMonitor"
        echo "Running command: $cmd"
        eval $cmd
 else
