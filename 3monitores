@@ -1,0 +1,133 @@
+#!/bin/bash
+
+BoG="\033[42;4;30m"
+BoR="\033[41;30m"
+GoB="\033[0;32m"
+uGoB="\033[0;4;32m"
+RoB="\033[0;31m"
+DefCo="\033[0m"
+
+nameE23="LG E2350V"
+name23MP="LG 23MP65"
+nameTV="TV SAMSUNG"
+nameAOC="Monitor AOC"
+
+MonE23="DVI-D-0"
+MonAOC="DVI-I-0"
+Mon23MP="HDMI-0"
+MonSerial4=""
+
+#####
+#  Mon1 = DVI-D-0  > 	MonSerial1= "LG E2350V"
+#  Mon2 = HDMI-0         >	MonSerial3= "LG 23MP65
+#  Mon3 = 
+#  Mon4 = DVI-I-0		 >	MonSerial2= "Monitor AOC"
+####
+
+function Default (){
+   xrandr --output $MonSerial2 --pos 1920x0
+   xrandr --output $MonSerial3 --pos 3840x0 --auto
+   echo -e "$BoG[$GoB Monitor LG | $Mon2name | TV SAMSUNG $BoG]$DefCo"
+}
+
+function Op01 (){
+   xrandr --output $MonSerial2 --pos 1920x0
+   xrandr --output $MonSerial3 --pos 0x0 --auto
+   echo -e "$BoG[$uGoB Monitor LG == TV SAMSUNG$GoB | $Mon2name $BoG]$DefCo"
+
+}
+
+function Op02 (){
+   xrandr --output $MonSerial2 --off
+   xrandr --output $MonSerial3 --pos 0x0 --auto
+   echo -e "$BoG[$uGoB Monitor LG == TV SAMSUNG $BoG]$DefCo $BoR#OFF$RoB $Mon2name\033[0m"
+
+}
+
+function Op03 (){
+   xrandr --output $MonSerial2 --pos 1920x0
+   xrandr --output $MonSerial3 --pos 0x0 --auto
+   xrandr --output $MonSerial3 --off
+   echo -e "$BoG[$GoB Monitor LG | $Mon2name $BoG]$DefCo $BoR#OFF$RoB TV SAMSUNG\033[0m"
+
+}
+
+function Op04 (){
+   xrandr --output $MonSerial2 --off
+   xrandr --output $MonSerial3 --pos 1920x0 --auto
+   echo -e "$BoG[$GoB Monitor LG | TV SAMSUNG  $BoG]$DefCo $BoR#OFF$RoB  $Mon2name $DefCo"
+
+}
+
+function Op05(){
+   xrandr --output $MonSerial3 --pos 1920x0
+   xrandr --output $MonSerial2 --pos 3840x0 --auto
+   echo -e "$BoG[$GoB $Mon1name | $Mon2name | $Mon4name $BoG]$DefCo"
+}
+
+function Op06(){
+   xrandr --output $MonE23 --pos 0x540 --auto
+   xrandr --output $Mon23MP --pos 1920x0 --auto
+   xrandr --output $MonAOC --pos 1920x1080 --auto
+   echo -e "$BoG[$GoB $nameE23 middle | $name23MP top | $nameAOC bottom $BoG]$DefCo"
+}
+
+function Op07(){
+   xrandr --output $Mon23MP --pos 0x0 --auto
+   xrandr --output $MonE23 --pos 1920x0 --auto
+   xrandr --output $MonAOC --pos 3840x0 --auto
+   echo -e "$BoG[$GoB $nameAOC | $nameE23 | $name23MP $BoG]$DefCo"
+}
+
+function Op08(){
+   xrandr --output $Mon23MP --pos 0x0 --auto
+   xrandr --output $MonE23 --pos 1920x0 --auto
+#   xrandr --output $MonAOC --pos 3840x0 --auto
+   echo -e "$BoG[$GoB $nameE23 | $name23MP $BoG]$DefCo"
+}
+
+function Op09(){
+   xrandr --output $MonAOC --pos 0x0 --auto
+   xrandr --output $MonE23 --pos 1280x0 --auto
+   xrandr --output $Mon23MP --pos 3200x0 --auto
+   echo -e "$BoG[$GoB $name23MP | $nameE23 | $nameAOC $BoG]$DefCo"
+}
+
+
+function printusage(){
+echo -e "\033[35mUSAGE:\033[0m 3monitores [OPTION]
+\t-l|-h\t List this options
+\t-1\t $BoG[$uGoB Monitor LG == TV SAMSUNG$GoB | Monitor AOC $BoG]$DefCo
+\t-2\t $BoG[$uGoB Monitor LG == TV SAMSUNG $BoG]$DefCo $BoR#OFF$RoB Monitor AOC\033[0m 
+\t-3\t $BoG[$GoB Monitor LG | Monitor AOC $BoG]$DefCo $BoR#OFF$RoB TV SAMSUNG\033[0m
+\t-4\t $BoG[$GoB Monitor LG | TV SAMSUNG  $BoG]$DefCo $BoR#OFF$RoB  Monitor AOC$DefCo
+\t-5\t $BoG[$GoB Monitor LG | TV SAMSUNG  $BoG]$DefCo $BoR#OFF$RoB  Monitor AOC$DefCo
+\t-7\t $BoG[$GoB $Mon2name | $Mon1name | $Mon3name $BoG]$DefCo
+\t-d\t DEFAULT: $BoG[$GoB Monitor LG | Monitor AOC | TV SAMSUNG $BoG]$DefCo"
+}
+
+
+################## ---------- MENU
+if
+	[ -z $1 ]
+then
+   Default	
+else
+	while getopts ":123456789hl" opt; do
+	  case $opt in
+		\?)     echo -e "Invalid option: $OPTARG\n" ; printusage ; exit 1 ;;
+		l|h) printusage ;;
+		1)  Op01 ;;
+		2)  Op02 ;;
+                3)  Op03 ;;
+                4)  Op04 ;;
+                5)  Op05 ;;
+                6)  Op06 ;;
+		7)  Op07 ;;
+                9)  Op09 ;;
+		:) echo "Option -$OPTARG requires an argument." >&2
+			exit 1 ;;
+	  esac
+	done
+fi
+###############\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
